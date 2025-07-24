@@ -80,7 +80,7 @@ def fetch_data_continuously():
                     timeout=TIMEOUT_SECONDS
                 )
                 
-                # ▼▼▼【自動停止ロジック】▼▼▼
+                # ユーザーIDが最大値を超えた場合、404エラーが続く場合は自動停止
                 if user_id_to_scan > MAX_USER_ID and res.status_code in [404, 410]:
                     consecutive_404_count += 1
                     tqdm.write(f"ID {user_id_to_scan} not found. (Consecutive 404s: {consecutive_404_count}/{CONSECUTIVE_404_LIMIT})")
@@ -129,6 +129,10 @@ def fetch_data_continuously():
                         c.execute("INSERT OR IGNORE INTO tunes (tune_id, name, tune_url, rhythm_id) VALUES (?, ?, ?, ?)",
                                   (tune_id, tune_name, tune_url, rhythm_id))
                         processed_tunes.add(tune_id)
+                
+                # ユーザー1人分の処理が終わるたびに、変更をデータベースにコミット（保存）する
+                conn.commit()
+                tqdm.write(f"User ID {actual_user_id}: Data committed to database.")
 
             except requests.exceptions.Timeout:
                 tqdm.write(f"Timeout occurred for user {user_id_to_scan}. Skipping.")
