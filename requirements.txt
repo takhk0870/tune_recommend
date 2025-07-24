@@ -1,5 +1,2 @@
 requests
-beautifulsoup4
-gensim
-numpy
-scikit-learn
+tqdm

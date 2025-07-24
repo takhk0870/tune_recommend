@@ -1,0 +1,12 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Database file
+thesession.db
+
+# Debug file
+debug_json.py
+
+# Debug output
+json_output/
